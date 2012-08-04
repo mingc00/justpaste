@@ -5,12 +5,17 @@ $ ->
     $("body").css
       backgroundImage: "url(#{dataURL})"
 
-    dataURL = dataURL.slice(22) if dataURL.indexOf('data:image/png;base64,')!=-1
+    base64 = dataURL.slice(22) if dataURL.indexOf('data:image/png;base64,')!=-1
+    fd = new FormData
+    fd.append 'image', base64
+    fd.append 'key', '5df8062c468eb678dd194db7e2216387'
     $.ajax
       type: 'POST'
-      url: './upload'
+      url: 'http://api.imgur.com/2/upload.json'
+      processData: false
+      contentType: false
+      data: fd
       dataType: 'json'
-      data: { image : dataURL }
       success: (data) ->
         url = data.upload.links.original
         text = $('<input type="text" />').attr('value', url).attr('size', 70).insertBefore('#image').zclip({
