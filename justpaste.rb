@@ -2,9 +2,10 @@ require 'rubygems'
 require 'sinatra'
 require 'execjs'
 require 'coffee-script'
+require 'slim'
 
 get '/' do
-  send_file('views/index.html')
+  slim :index
 end
 
 get '/paste.js' do

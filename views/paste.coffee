@@ -2,8 +2,7 @@ $ ->
   $("html").pasteImageReader (results) ->
     {filename, dataURL} = results
 
-    $("body").css
-      backgroundImage: "url(#{dataURL})"
+    $('#image').attr('src', dataURL)
 
     base64 = dataURL.slice(22) if dataURL.indexOf('data:image/png;base64,')!=-1
     fd = new FormData
