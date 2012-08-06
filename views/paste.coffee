@@ -1,5 +1,5 @@
 $ ->
-  if window.clipboard
+  if window.Clipboard
     $("html").pasteImageReader (results) ->
       {filename, dataURL} = results
       $('#image').attr('src', dataURL)
