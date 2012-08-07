@@ -15,7 +15,3 @@ end
 get '/jquery_paste_image_reader.js' do
   coffee :jquery_paste_image_reader
 end
-
-get '/clipboard/:filename' do |filename|
-  send_file(File.join('views', 'clipboard', filename))
-end

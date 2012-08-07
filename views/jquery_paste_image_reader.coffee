@@ -15,14 +15,18 @@
 
   defaults =
     callback: $.noop
+    fail: $.noop
     matchType: /image.*/
 
   $.fn.pasteImageReader = (options) ->
-    if typeof options == "function"
-      options =
-        callback: options
+    if typeof options == "object"
+      opts = {}
+      if options.callback && typeof options.callback == "function"
+        opts.callback = options.callback
+      if options.fail && typeof options.fail == "function"
+        opts.fail = options.fail
 
-    options = $.extend({}, defaults, options)
+    options = $.extend({}, defaults, opts)
 
     this.each ->
       element = this
@@ -50,5 +54,8 @@
             reader.readAsDataURL(file)
 
             found = true
+
+        if found == false
+          options.fail.call element
 
 )(jQuery)
