@@ -1,25 +1,17 @@
 $ ->
-  if window.Clipboard
-    $('body').pasteImageReader
-      callback: (results) ->
-        {filename, dataURL} = results
-        stack.add(dataURL)
-        upload(dataURL)
-      fail: (results) ->
-        $.pnotify(
-          title: 'Oh NO!'
-          text: 'No image data in clipboard'
-          type: 'error'
-          delay: 2000
-        )
-  else
-    pasteCatcher = $('<div></div>').attr('contenteditable', '').attr('id', '__paste').css('display', 'none')
-    $('body').append(pasteCatcher)
-    pasteCatcher.focus()
-    $(this).bind 'click', ->
-      pasteCatcher.focus()
-    $(window).bind 'paste', (e) ->
-      setTimeout(checkInput, 1)
+  $('body').pasteImageReader
+    callback: (results) ->
+      console.log results
+      dataURL = results.dataURL
+      stack.add(dataURL)
+      upload(dataURL)
+    fail: (results) ->
+      $.pnotify(
+        title: 'Oh NO!'
+        text: 'No image data in clipboard'
+        type: 'error'
+        delay: 2000
+      )
 
   class ImageStack
     constructor: ->
@@ -50,16 +42,6 @@ $ ->
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
 
   stack = new ImageStack
-
-  checkInput = ->
-    child = $('#__paste').children()[0]
-    $('#__paste').html('')
-    if child
-      if child.tagName == 'IMG'
-        dataURL = child.src
-        stack.add(dataURL)
-        # console.log dataURL
-        upload(dataURL)
 
   upload = (dataURL) ->
     base64 = dataURL.slice(22) if dataURL.indexOf('data:image/png;base64,')!=-1

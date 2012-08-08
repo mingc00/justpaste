@@ -28,6 +28,28 @@
 
     options = $.extend({}, defaults, opts)
 
+    if not window.Clipboard
+      pasteCatcher = $('<div></div>').attr('contenteditable', '').attr('id', '__paste').css('display', 'none')
+      $('body').append(pasteCatcher)
+      pasteCatcher.focus()
+      $(this).bind 'click', ->
+        pasteCatcher.focus()
+
+      checkInput = ->
+        child = $('#__paste').children()[0]
+        $('#__paste').html('')
+        if child && child.tagName == 'IMG'
+            dataURL = child.src
+            options.callback(
+              dataURL: child.src
+            )
+        else
+          options.fail()
+
+      $(window).bind 'paste', (e) ->
+        setTimeout(checkInput, 1)
+      return
+
     this.each ->
       element = this
       $this = $(this)
