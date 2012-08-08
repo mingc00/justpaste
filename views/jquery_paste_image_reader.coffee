@@ -40,14 +40,12 @@
         $('#__paste').html('')
         if child && child.tagName == 'IMG'
             dataURL = child.src
-            options.callback(
-              dataURL: child.src
-            )
+            options.callback(dataURL: child.src)
         else
           options.fail()
 
       $(window).bind 'paste', (e) ->
-        setTimeout(checkInput, 1)
+        setTimeout(checkInput, 10)
       return
 
     this.each ->

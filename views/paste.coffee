@@ -1,7 +1,6 @@
 $ ->
   $('body').pasteImageReader
     callback: (results) ->
-      console.log results
       dataURL = results.dataURL
       stack.add(dataURL)
       upload(dataURL)
@@ -12,6 +11,17 @@ $ ->
         type: 'error'
         delay: 2000
       )
+
+  $('#loading-icon').bind('ajaxSend', ->
+    tb = stack.at(0).children('a.thumbnail')
+    tb.children().hide()
+    $(this).appendTo(tb)
+    $(this).show()
+  ).bind('ajaxComplete', ->
+    $(this).hide()
+    stack.at(0).children('a.thumbnail').children('canvas').show('slow')
+  ).bind('ajaxError', ->
+  )
 
   class ImageStack
     constructor: ->
@@ -54,6 +64,7 @@ $ ->
       url: 'http://api.imgur.com/2/upload.json'
       processData: false
       contentType: false
+      crossDomain: true
       data: fd
       dataType: 'json'
       success: (data) ->

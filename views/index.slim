@@ -22,6 +22,17 @@ html
       .image-block {
         display: none;
       }
+      #loading-icon {
+        display: none;
+        width: 352px;
+        height: 198px;
+        background-image: url(images/ajax-loader.gif);
+        background-repeat: no-repeat;
+        background-position: center center;
+      }
+      #loading-icon img {
+        display: inline-block;
+      }
   body
     div class="navbar"
       div class="navbar-inner"
@@ -40,4 +51,5 @@ html
               - 3.times do
                 li class="span4 image-block"
                   a href="#" class="thumbnail"
-                    canvas width="352" height="198"
+                    canvas width="352px" height="198px"
+    div id="loading-icon"
