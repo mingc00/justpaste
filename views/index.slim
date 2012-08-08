@@ -3,7 +3,8 @@ html
   head
     title Justpaste
     meta http-equiv="content-type" content="text/html charset=UTF-8"
-    link rel="stylesheet" type="text/css" href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/css/bootstrap-combined.min.css"
+    link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/bootstrap/2.0.4/css/bootstrap.min.css"
+    link rel="stylesheet" type="text/css" href="http://cdn.jsdelivr.net/bootstrap/2.0.4/css/bootstrap-responsive.min.css"
     link rel="stylesheet" type="text/css" href="pnotify/jquery.pnotify.default.css"
     script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"
     script type="text/javascript" src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.0.4/js/bootstrap.min.js"
@@ -11,19 +12,32 @@ html
     script type="text/javascript" src="jquery_paste_image_reader.js"
     script type="text/javascript" src="pnotify/jquery.pnotify.min.js"
     script type="text/javascript" src="paste.js"
-
+    css:
+      canvas {
+        display: block;
+        max-width: 100%;
+        margin-right: auto;
+        margin-left: auto;
+      }
+      .image-block {
+        display: none;
+      }
   body
-    div id="image_area"
-      canvas id="snapshot"
-    div class="modal hide" id="response_box"
-      div class="modal-header"
-        button type="button" class="close" data-dismiss="modal" x
-        h3 TITLE
-      div class="modal-body"
-        div id="finished"
-          p class="wall"
-            a href=""
-        div id="uploading"
-          img src="images/ajax-loader.gif" alt="uploading"
-      div class="modal-footer"
-        a id="copy_button" href="#" class="btn btn-primary" Copy
+    div class="navbar"
+      div class="navbar-inner"
+        div class="container"
+          a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse"
+            span class="icon-bar"
+            span class="icon-bar"
+            span class="icon-bar"
+          a class="brand" href="#" Justpaste
+
+    div class="container"
+      - 3.times do
+        div class="row"
+          div class="span12"
+            ul class="thumbnails"
+              - 3.times do
+                li class="span4 image-block"
+                  a href="#" class="thumbnail"
+                    canvas width="352" height="198"

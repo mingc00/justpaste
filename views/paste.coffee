@@ -1,9 +1,9 @@
 $ ->
   if window.Clipboard
-    $("html").pasteImageReader
+    $('body').pasteImageReader
       callback: (results) ->
         {filename, dataURL} = results
-        setSnapshot(dataURL)
+        stack.add(dataURL)
         upload(dataURL)
       fail: (results) ->
         $.pnotify(
@@ -13,7 +13,7 @@ $ ->
           delay: 2000
         )
   else
-    pasteCatcher = $('<div></div>').attr('contenteditable', '').css('display', 'none')
+    pasteCatcher = $('<div></div>').attr('contenteditable', '').attr('id', '__paste').css('display', 'none')
     $('body').append(pasteCatcher)
     pasteCatcher.focus()
     $(this).bind 'click', ->
@@ -21,59 +21,47 @@ $ ->
     $(window).bind 'paste', (e) ->
       setTimeout(checkInput, 1)
 
-  class Modal
-    constructor: () ->
-      @m = $('#response_box').modal({ show: false })
+  class ImageStack
+    constructor: ->
+      @count = 0
 
-    finished: (url) ->
-      this.set_title 'Finish'
-      $('#finished a').attr('href', url).html(url)
+    at: (index) ->
+      return $(".image-block:eq(#{index})")
 
-      $('#uploading').css('display', 'none')
-      $('#finished').css('display', 'block')
-      $('#copy_button').zclip(
-        path: 'zclip/ZeroClipboard.swf'
-        copy: url
-        afterCopy: () ->
-          box.close()
-      )
+    add: (dataURL) ->
+      if @count > 0
+        this.shift()
+      img = new Image()
+      img.onload = ->
+        canvas = $('.image-block').first().children('.thumbnail').children('canvas')[0]
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+      img.src = dataURL
 
-    uploading: ->
-      this.set_title 'Uploading'
+      if @count < 9
+        @count++
+        $(".image-block:lt(#{@count})").css('display', 'block')
 
-      $('#uploading').css('display', 'block')
-      $('#finished').css('display', 'none')
-      @m.modal('show')
+    shift: ->
+      blocks = $('.image-block')
+      for b, i in blocks when i % 3 == 2
+        $(blocks[i]).insertBefore(blocks[(i+1) % 9])
+      if @count == 9
+        canvas = $('.image-block').first().children('.thumbnail').children('canvas')[0]
+        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
 
-    set_title: (title) ->
-      $('.modal-header h3').html(title)
-
-    close: ->
-      @m.modal('hide')
-
-  box = new Modal
+  stack = new ImageStack
 
   checkInput = ->
-    child = $('div')[0].childNodes[0]
-    $('div').html('')
+    child = $('#__paste').children()[0]
+    $('#__paste').html('')
     if child
       if child.tagName == 'IMG'
         dataURL = child.src
-        setSnapshot(dataURL)
+        stack.add(dataURL)
+        # console.log dataURL
         upload(dataURL)
 
-  setSnapshot = (dataURL) ->
-    img = new Image()
-    img.onload = ->
-      canvas = document.getElementById('snapshot')
-      canvas.width = img.width
-      canvas.height = img.height
-      canvas.getContext('2d').drawImage(img, 0, 0)
-    img.src = dataURL
-
   upload = (dataURL) ->
-    box.uploading()
-
     base64 = dataURL.slice(22) if dataURL.indexOf('data:image/png;base64,')!=-1
     fd = new FormData
     fd.append 'image', base64
@@ -94,5 +82,10 @@ $ ->
           delay: 2000
         )
         url = data.upload.links.original
-        box.finished(url)
+        stack.at(0).children('a').zclip(
+          path: 'zclip/ZeroClipboard.swf'
+          copy: url
+          afterCopy: () ->
+        )
+
         return
