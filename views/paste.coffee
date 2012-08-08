@@ -1,79 +1,59 @@
 $ ->
-  if window.Clipboard
-    $("html").pasteImageReader
-      callback: (results) ->
-        {filename, dataURL} = results
-        setSnapshot(dataURL)
-        upload(dataURL)
-      fail: (results) ->
-        $.pnotify(
-          title: 'Oh NO!'
-          text: 'No image data in clipboard'
-          type: 'error'
-          delay: 2000
-        )
-  else
-    pasteCatcher = $('<div></div>').attr('contenteditable', '').css('display', 'none')
-    $('body').append(pasteCatcher)
-    pasteCatcher.focus()
-    $(this).bind 'click', ->
-      pasteCatcher.focus()
-    $(window).bind 'paste', (e) ->
-      setTimeout(checkInput, 1)
-
-  class Modal
-    constructor: () ->
-      @m = $('#response_box').modal({ show: false })
-
-    finished: (url) ->
-      this.set_title 'Finish'
-      $('#finished a').attr('href', url).html(url)
-
-      $('#uploading').css('display', 'none')
-      $('#finished').css('display', 'block')
-      $('#copy_button').zclip(
-        path: 'zclip/ZeroClipboard.swf'
-        copy: url
-        afterCopy: () ->
-          box.close()
+  $('body').pasteImageReader
+    callback: (results) ->
+      dataURL = results.dataURL
+      stack.add(dataURL)
+      upload(dataURL)
+    fail: (results) ->
+      $.pnotify(
+        title: 'Oh NO!'
+        text: 'No image data in clipboard'
+        type: 'error'
+        delay: 2000
       )
 
-    uploading: ->
-      this.set_title 'Uploading'
+  $('#loading-icon').bind('ajaxSend', ->
+    tb = stack.at(0).children('a.thumbnail')
+    tb.children().hide()
+    $(this).appendTo(tb)
+    $(this).show()
+  ).bind('ajaxComplete', ->
+    $(this).hide()
+    stack.at(0).children('a.thumbnail').children('canvas').show('slow')
+  ).bind('ajaxError', ->
+  )
 
-      $('#uploading').css('display', 'block')
-      $('#finished').css('display', 'none')
-      @m.modal('show')
+  class ImageStack
+    constructor: ->
+      @count = 0
 
-    set_title: (title) ->
-      $('.modal-header h3').html(title)
+    at: (index) ->
+      return $(".image-block:eq(#{index})")
 
-    close: ->
-      @m.modal('hide')
+    add: (dataURL) ->
+      if @count > 0
+        this.shift()
+      img = new Image()
+      img.onload = ->
+        canvas = $('.image-block').first().children('.thumbnail').children('canvas')[0]
+        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
+      img.src = dataURL
 
-  box = new Modal
+      if @count < 9
+        @count++
+        $(".image-block:lt(#{@count})").css('display', 'block')
 
-  checkInput = ->
-    child = $('div')[0].childNodes[0]
-    $('div').html('')
-    if child
-      if child.tagName == 'IMG'
-        dataURL = child.src
-        setSnapshot(dataURL)
-        upload(dataURL)
+    shift: ->
+      blocks = $('.image-block')
+      for b, i in blocks when i % 3 == 2
+        $(blocks[i]).insertBefore(blocks[(i+1) % 9])
+      if @count == 9
+        canvas = $('.image-block').first().children('.thumbnail').children('canvas')[0]
+        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
 
-  setSnapshot = (dataURL) ->
-    img = new Image()
-    img.onload = ->
-      canvas = document.getElementById('snapshot')
-      canvas.width = img.width
-      canvas.height = img.height
-      canvas.getContext('2d').drawImage(img, 0, 0)
-    img.src = dataURL
+  stack = new ImageStack
 
   upload = (dataURL) ->
-    box.uploading()
-
     base64 = dataURL.slice(22) if dataURL.indexOf('data:image/png;base64,')!=-1
     fd = new FormData
     fd.append 'image', base64
@@ -84,6 +64,7 @@ $ ->
       url: 'http://api.imgur.com/2/upload.json'
       processData: false
       contentType: false
+      crossDomain: true
       data: fd
       dataType: 'json'
       success: (data) ->
@@ -94,5 +75,10 @@ $ ->
           delay: 2000
         )
         url = data.upload.links.original
-        box.finished(url)
+        stack.at(0).children('a').zclip(
+          path: 'zclip/ZeroClipboard.swf'
+          copy: url
+          afterCopy: () ->
+        )
+
         return

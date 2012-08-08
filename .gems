@@ -1,3 +1,0 @@
-source 'http://rubygems.org'
-'sinatra'
-'coffee_script'
