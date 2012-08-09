@@ -12,30 +12,19 @@ $ ->
         delay: 2000
       )
 
-  $('#loading-icon').bind('ajaxSend', ->
-    tb = stack.at(0).children('a.thumbnail')
-    tb.children().hide()
-    $(this).appendTo(tb)
-    $(this).show()
-  ).bind('ajaxComplete', ->
-    $(this).hide()
-    stack.at(0).children('a.thumbnail').children('canvas').show('slow')
-  ).bind('ajaxError', ->
-  )
-
   class ImageStack
     constructor: ->
       @count = 0
 
     at: (index) ->
-      return $(".image-block:eq(#{index})")
+      return $(".image-block:eq(#{index})").children('a.thumbnail')
 
     add: (dataURL) ->
       if @count > 0
         this.shift()
       img = new Image()
       img.onload = ->
-        canvas = $('.image-block').first().children('.thumbnail').children('canvas')[0]
+        canvas = $('.image-block').first().children('a.thumbnail').children('canvas')[0]
         canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height)
       img.src = dataURL
 
@@ -50,6 +39,15 @@ $ ->
       if @count == 9
         canvas = $('.image-block').first().children('.thumbnail').children('canvas')[0]
         canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height)
+
+    rebind: ->
+      $(".image-block:lt(#{@count})").children('a').zclip('remove').zclip(
+        path: 'zclip/ZeroClipboard.swf'
+        copy: ->
+          console.log 'copy'
+          $(this).attr('title')
+        afterCopy: ->
+      )
 
   stack = new ImageStack
 
@@ -67,18 +65,18 @@ $ ->
       crossDomain: true
       data: fd
       dataType: 'json'
+      beforeSend: ->
+        stack.at(0).children('canvas').css('visibility', 'hidden').parent().addClass('loading-icon')
       success: (data) ->
+        stack.at(0).children('canvas').css('visibility', 'visible').css('display', 'none').fadeIn().parent().removeClass('loading-icon')
         $.pnotify(
           title: 'Upload success'
           text: 'Image in clipboard is uploaded'
           type: 'success'
-          delay: 2000
+          delay: 5000
         )
         url = data.upload.links.original
-        stack.at(0).children('a').zclip(
-          path: 'zclip/ZeroClipboard.swf'
-          copy: url
-          afterCopy: () ->
-        )
+        stack.at(0).attr('title', url)
+        stack.rebind()
 
         return
