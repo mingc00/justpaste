@@ -156,20 +156,35 @@ $(function() {
       data: fd,
       dataType: 'json',
       beforeSend: function() {
-        return stack.at(0).children('canvas').css('visibility', 'hidden').parent().addClass('loading-icon');
+        stack.at(0).
+          children('canvas').
+          css('visibility', 'hidden').
+          parent().addClass('loading-icon').
+            append('<div class="progress progress-striped active"><div class="bar"></div></div>')
       },
       success: function(data) {
-        var url;
         stack.at(0).children('canvas').css('visibility', 'visible').css('display', 'none').fadeIn().parent().removeClass('loading-icon');
+        $('.progress').remove();
         $.pnotify({
           title: 'Upload success',
           text: 'Image in clipboard is uploaded',
           type: 'success',
           delay: 5000
         });
-        url = data.upload.links.original;
+        var url = data.upload.links.original;
         stack.at(0).attr('title', url);
         stack.rebind();
+      },
+      xhr: function() {
+        var xhr = new window.XMLHttpRequest();
+        xhr.upload.addEventListener('progress', function(evt) {
+          if(evt.lengthComputable) {
+            var percent_complete = evt.loaded * 100 / evt.total;
+            $('.bar').css('width', Math.floor(percent_complete) + '%')
+            console.log(percent_complete);
+          }
+        }, false)
+        return xhr;
       }
     });
   };
