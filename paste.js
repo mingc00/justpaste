@@ -81,50 +81,92 @@ $(function() {
 
   function createImage(dataURL) {
     stack.add(dataURL);
-    upload(dataURL);
+    // upload(dataURL);
   }
 
-  var ImageStack = (function() {
-
-    function ImageStack() {
-      this.count = 0;
+  var ImageQueue = (function () {
+    function ImageQueue() {
+      this.idx = 0;
+      this.canvases = $('.image-block canvas');
+      this.page = 0;
     }
 
-    ImageStack.prototype.at = function(index) {
-      return $(".image-block:eq(" + index + ")").children('a.thumbnail');
-    };
+    ImageQueue.prototype.latest = function() {
+      return this.canvases.eq(this.idx)[0];
+    }
 
-    ImageStack.prototype.add = function(dataURL) {
-      if (this.count > 0) {
-        this.shift();
+    ImageQueue.prototype.add = function(dataURL) {
+      if(this.idx > 9) {
+        // another page
       }
+
       var img = new Image();
       img.onload = function() {
-        var canvas = $('.image-block').first().children('a.thumbnail').children('canvas')[0];
+        // var canvas = stack.latest();
+        var canvas = document.getElementsByTagName('canvas')[0];
         canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
+        console.log('test')
       };
       img.src = dataURL;
-      if (this.count < 9) {
-        this.count++;
-        return $(".image-block:lt(" + this.count + ")").css('display', 'block');
-      }
-    };
+    }
 
-    ImageStack.prototype.shift = function() {
-      var blocks = $('.image-block');
-      for(var i = 0; i < blocks.length; i++) {
-        if(i % 3 == 2) {
-          $(blocks[i]).insertBefore(blocks[(i + 1) % 9]);
+    ImageQueue.prototype._upload = function(idx, dataURL) {
+      if (dataURL.indexOf('data:image/png;base64,') !== -1) {
+        var base64 = dataURL.slice(22);
+      }
+      var fd = new FormData;
+      fd.append('image', base64);
+      fd.append('key', '5df8062c468eb678dd194db7e2216387');
+
+      var upload = (function() {
+        var idx = this.idx;
+        return function () {
+          $.ajax({
+            type: 'POST',
+            url: 'http://api.imgur.com/2/upload.json',
+            processData: false,
+            contentType: false,
+            crossDomain: true,
+            data: fd,
+            dataType: 'json',
+            beforeSend: function() {
+              stack.canvas_doms[idx].
+                css('visibility', 'hidden').
+                parent().addClass('loading-icon').
+                  append('<div class="progress progress-striped active"><div class="bar"></div></div>')
+            },
+            success: function(data) {
+              stack.canvas_doms[idx].css('visibility', 'visible').css('display', 'none').fadeIn().parent().removeClass('loading-icon');
+              $('.progress').remove();
+              $.pnotify({
+                title: 'Upload success',
+                text: 'Image in clipboard is uploaded',
+                type: 'success',
+                delay: 5000
+              });
+              var url = data.upload.links.original;
+              $('.image-block a').attr('title', url);
+              stack.rebind(idx);
+            },
+            xhr: function() {
+              var xhr = new window.XMLHttpRequest();
+              xhr.upload.addEventListener('progress', function(evt) {
+                if(evt.lengthComputable) {
+                  var percent_complete = evt.loaded * 100 / evt.total;
+                  $('.bar').css('width', Math.floor(percent_complete) + '%')
+                  console.log(percent_complete);
+                }
+              }, false)
+              return xhr;
+            }
+          });
         }
-      }
-      if (this.count === 9) {
-        canvas = $('.image-block').first().children('.thumbnail').children('canvas')[0];
-        canvas.getContext('2d').clearRect(0, 0, canvas.width, canvas.height);
-      }
-    };
+      })();
 
-    ImageStack.prototype.rebind = function() {
-      $(".image-block:lt(" + this.count + ")").children('a').zclip('remove').zclip({
+    }
+
+    ImageQueue.prototype.rebind = function(idx) {
+      $(".image-block").eq(idx).children('a').zclip({
         path: 'zclip/ZeroClipboard.swf',
         copy: function() {
           console.log('copy');
@@ -132,60 +174,11 @@ $(function() {
         },
         afterCopy: function() {}
       });
-    };
+    }
 
-    return ImageStack;
+    return ImageQueue;
 
   })();
 
-  var stack = new ImageStack;
-
-  upload = function(dataURL) {
-    if (dataURL.indexOf('data:image/png;base64,') !== -1) {
-      var base64 = dataURL.slice(22);
-    }
-    var fd = new FormData;
-    fd.append('image', base64);
-    fd.append('key', '5df8062c468eb678dd194db7e2216387');
-    $.ajax({
-      type: 'POST',
-      url: 'http://api.imgur.com/2/upload.json',
-      processData: false,
-      contentType: false,
-      crossDomain: true,
-      data: fd,
-      dataType: 'json',
-      beforeSend: function() {
-        stack.at(0).
-          children('canvas').
-          css('visibility', 'hidden').
-          parent().addClass('loading-icon').
-            append('<div class="progress progress-striped active"><div class="bar"></div></div>')
-      },
-      success: function(data) {
-        stack.at(0).children('canvas').css('visibility', 'visible').css('display', 'none').fadeIn().parent().removeClass('loading-icon');
-        $('.progress').remove();
-        $.pnotify({
-          title: 'Upload success',
-          text: 'Image in clipboard is uploaded',
-          type: 'success',
-          delay: 5000
-        });
-        var url = data.upload.links.original;
-        stack.at(0).attr('title', url);
-        stack.rebind();
-      },
-      xhr: function() {
-        var xhr = new window.XMLHttpRequest();
-        xhr.upload.addEventListener('progress', function(evt) {
-          if(evt.lengthComputable) {
-            var percent_complete = evt.loaded * 100 / evt.total;
-            $('.bar').css('width', Math.floor(percent_complete) + '%')
-            console.log(percent_complete);
-          }
-        }, false)
-        return xhr;
-      }
-    });
-  };
+  var stack = new ImageQueue;
 });
