@@ -29,6 +29,12 @@ $(function() {
       // Get the items from the clipboard
       var items = e.clipboardData.items;
       if (items) {
+        var pastedImage = new FileReader();
+        pastedImage.onload = function (event) {
+          var dataURL = event.target.result;
+          createImage(dataURL);
+        };
+
         // Loop through all items, looking for any kind of image
         for (var i = 0; i < items.length; i++) {
           if (items[i].type.indexOf("image") !== -1) {
@@ -36,11 +42,6 @@ $(function() {
             var blob = items[i].getAsFile();
 
             // The URL can then be used as the source of an image
-            var pastedImage = new FileReader();
-            pastedImage.onload = function (event) {
-              var dataURL = event.target.result;
-              createImage(dataURL);
-            }
             pastedImage.readAsDataURL(blob);
           }
         }
@@ -80,8 +81,7 @@ $(function() {
   }
 
   function createImage(dataURL) {
-    stack.add(dataURL);
-    // upload(dataURL);
+    queue.add(dataURL);
   }
 
   var ImageQueue = (function () {
@@ -93,7 +93,7 @@ $(function() {
 
     ImageQueue.prototype.latest = function() {
       return this.canvases.eq(this.idx)[0];
-    }
+    };
 
     ImageQueue.prototype.add = function(dataURL) {
       if(this.idx > 9) {
@@ -102,83 +102,81 @@ $(function() {
 
       var img = new Image();
       img.onload = function() {
-        // var canvas = stack.latest();
-        var canvas = document.getElementsByTagName('canvas')[0];
-        canvas.getContext('2d').drawImage(img, 0, 0, canvas.width, canvas.height);
-        console.log('test')
+        var canvas = queue.latest();
+        canvas.getContext('2d').drawImage(this, 0, 0, canvas.width, canvas.height);
+        queue.upload(queue.idx, this.src);
+        queue.idx++;
       };
       img.src = dataURL;
-    }
+    };
 
-    ImageQueue.prototype._upload = function(idx, dataURL) {
+    ImageQueue.prototype.upload = function(idx, dataURL) {
+      var base64;
       if (dataURL.indexOf('data:image/png;base64,') !== -1) {
-        var base64 = dataURL.slice(22);
+        base64 = dataURL.slice(22);
       }
-      var fd = new FormData;
+      var fd = new FormData();
       fd.append('image', base64);
       fd.append('key', '5df8062c468eb678dd194db7e2216387');
 
-      var upload = (function() {
-        var idx = this.idx;
-        return function () {
-          $.ajax({
-            type: 'POST',
-            url: 'http://api.imgur.com/2/upload.json',
-            processData: false,
-            contentType: false,
-            crossDomain: true,
-            data: fd,
-            dataType: 'json',
-            beforeSend: function() {
-              stack.canvas_doms[idx].
-                css('visibility', 'hidden').
-                parent().addClass('loading-icon').
-                  append('<div class="progress progress-striped active"><div class="bar"></div></div>')
-            },
-            success: function(data) {
-              stack.canvas_doms[idx].css('visibility', 'visible').css('display', 'none').fadeIn().parent().removeClass('loading-icon');
-              $('.progress').remove();
-              $.pnotify({
-                title: 'Upload success',
-                text: 'Image in clipboard is uploaded',
-                type: 'success',
-                delay: 5000
-              });
-              var url = data.upload.links.original;
-              $('.image-block a').attr('title', url);
-              stack.rebind(idx);
-            },
-            xhr: function() {
-              var xhr = new window.XMLHttpRequest();
-              xhr.upload.addEventListener('progress', function(evt) {
-                if(evt.lengthComputable) {
-                  var percent_complete = evt.loaded * 100 / evt.total;
-                  $('.bar').css('width', Math.floor(percent_complete) + '%')
-                  console.log(percent_complete);
-                }
-              }, false)
-              return xhr;
-            }
+      var upload_req = $.ajax({
+        type: 'POST',
+        url: 'http://api.imgur.com/2/upload.json',
+        processData: false,
+        contentType: false,
+        crossDomain: true,
+        data: fd,
+        dataType: 'json',
+        beforeSend: function() {
+          queue.canvases.eq(idx).css('visibility', 'hidden');
+          $('.image-block').eq(idx).addClass('loading-icon').css('display', 'block').
+              append('<div class="progress progress-striped active"><div class="bar"></div></div>');
+        },
+        success: function(data, status, xhr) {
+          var index = xhr.idx;
+          var obj = queue.canvases.eq(index);
+          obj.css('visibility', 'visible').css('display', 'none').fadeIn().parent().removeClass('loading-icon');
+          // remove progress bar
+          obj.parent().next().remove();
+          $.pnotify({
+            title: 'Upload success',
+            text: 'Image in clipboard is uploaded',
+            type: 'success',
+            delay: 5000
           });
+          var url = data.upload.links.original;
+          // attach url
+          obj.parent().attr('title', url);
+          queue.bind_copy(index);
+        },
+        xhr: function() {
+          var xhr = new window.XMLHttpRequest();
+          xhr.upload.addEventListener('progress', function(evt) {
+            if(evt.lengthComputable) {
+              var percent_complete = evt.loaded * 100 / evt.total;
+              $('.bar').css('width', Math.floor(percent_complete) + '%');
+              console.log(percent_complete);
+            }
+          }, false);
+          return xhr;
         }
-      })();
+      });
+      upload_req.idx = idx;
+    };
 
-    }
-
-    ImageQueue.prototype.rebind = function(idx) {
+    ImageQueue.prototype.bind_copy = function(idx) {
       $(".image-block").eq(idx).children('a').zclip({
         path: 'zclip/ZeroClipboard.swf',
         copy: function() {
-          console.log('copy');
           return $(this).attr('title');
         },
         afterCopy: function() {}
       });
-    }
+    };
 
     return ImageQueue;
 
   })();
 
-  var stack = new ImageQueue;
+  var queue = new ImageQueue();
 });
