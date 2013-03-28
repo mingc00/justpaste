@@ -158,10 +158,11 @@ $(function() {
         },
         xhr: function() {
           var xhr = new window.XMLHttpRequest();
+          xhr.upload.idx = idx;
           xhr.upload.addEventListener('progress', function(evt) {
             if(evt.lengthComputable) {
               var percent_complete = evt.loaded * 100 / evt.total;
-              $('.bar').css('width', Math.floor(percent_complete) + '%');
+              $('.image-block').eq(this.idx).find('.bar').css('width', Math.floor(percent_complete) + '%');
               console.log(percent_complete);
             }
           }, false);
