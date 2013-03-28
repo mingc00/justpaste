@@ -70,12 +70,7 @@ $(function() {
       if (child.tagName === "IMG") {
         createImage(child.src);
       } else {
-        $.pnotify({
-          title: 'Oh NO!',
-          text: 'No image data in clipboard',
-          type: 'error',
-          delay: 2000
-        });
+        //No image data in clipboard
       }
     }
   }
@@ -84,11 +79,12 @@ $(function() {
     queue.add(dataURL);
   }
 
-  function notify(type, msg) {
-    $('.notifications').notify({
-      type: type,
-      message: { text: msg }
-    }).show();
+  function notify(msg, idx) {
+    $.gritter.add({
+      title: msg,
+      text: '',
+      image: $('canvas').eq(idx)[0].toDataURL()
+    });
   }
 
   var ImageQueue = (function () {
@@ -138,7 +134,6 @@ $(function() {
           queue.canvases.eq(idx).css('visibility', 'hidden');
           $('.image-block').eq(idx).addClass('loading-icon').css('display', 'block').
               find('.thumbnail').append('<div class="progress progress-striped active"><div class="bar"></div></div>');
-          notify('info', 'Uploading');
         },
         success: function(data, status, xhr) {
           var index = xhr.idx;
@@ -146,7 +141,7 @@ $(function() {
           obj.css('visibility', 'visible').css('display', 'none').fadeIn().parent().removeClass('loading-icon');
           // remove progress bar
           $('.image-block').find('.progress').remove();
-          notify('success', 'Done');
+          notify('Done', index);
           var url = data.upload.links.original;
           // attach url
           $('.image-block').find('.cp-link').attr('title', url);
@@ -155,6 +150,7 @@ $(function() {
             var visibility = (e.type == 'mouseleave' ? 'hidden' : 'visible');
             $(this).find('.dashboard').css('visibility', visibility);
           });
+          f = xhr;
         },
         xhr: function() {
           var xhr = new window.XMLHttpRequest();
@@ -178,7 +174,9 @@ $(function() {
         copy: function() {
           return $(this).attr('title');
         },
-        afterCopy: function() {}
+        afterCopy: function() {
+          notify('Copy link', idx);
+        }
       });
     };
 
