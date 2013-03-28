@@ -3,113 +3,101 @@
 <head>
   <title>Justpaste</title>
 </head>
-<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.2.2/css/bootstrap-combined.min.css" rel="stylesheet">
-<link rel="stylesheet" type="text/css" href="pnotify/jquery.pnotify.default.css">
+<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+<link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
+<link href="bootstrap-notify/bootstrap-notify.css" rel="stylesheet">
 <script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
+<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="zclip/jquery.zclip.min.js"></script>
-<script type="text/javascript" src="pnotify/jquery.pnotify.min.js"></script>
+<script type="text/javascript" src="bootstrap-notify/bootstrap-notify.js"></script>
 <script type="text/javascript" src="paste.js"></script>
-<style type="text/css">
-  canvas {
-    display: block;
-    max-width: 100%;
-    margin-right: auto;
-    margin-left: auto;
-    width: 352px;
-    height: 198px;
-  }
-  .image-block {
-    display: none;
-  }
-  .loading-icon {
-    background-image: url(images/ajax-loader.gif);
-    background-repeat: no-repeat;
-    background-position: center center;
-  }
-  .progress {
-    position: relative;
-    bottom: 40px;
-    width: 95%;
-    margin: 0 auto;
-  }
-</style>
+<script type="text/javascript" src="ui.js"></script>
+<link href="stylesheet.css" rel="stylesheet">
 <body>
-<div class="navbar navbar-inverse">
-  <div class="navbar-inner">
-    <div class="container">
-      <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <span class="icon-bar"></span>
-        <a class="brand" href="#">Justpaste</a>
-      </a>
+  <div class="container">
+    <div class="masterhead">
+      <h1>Justpaste</h1>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="span12">
+        <ul class="thumbnails">
+          <li class="span4 image-block">
+            <div class="thumbnail">
+              <canvas></canvas>
+              <div class="dashboard">
+                <div class="action-bar">
+                  <a href="#"><i class="icon-link"></i> Copy link</a>
+                  <a href="#" class="cp-link"><i class="icon-link"></i> Copy link</a>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="span4 image-block">
+            <div class="thumbnail">
+              <canvas></canvas>
+              <div class="dashboard">
+                <div class="action-bar">
+                  <a href="#"><i class="icon-link"></i> Copy link</a>
+                  <a href="#" class="cp-link"><i class="icon-link"></i> Copy link</a>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="span4 image-block">
+            <div class="thumbnail">
+              <canvas></canvas>
+              <div class="dashboard">
+                <div class="action-bar">
+                  <a href="#"><i class="icon-link"></i> Copy link</a>
+                  <a href="#" class="cp-link"><i class="icon-link"></i> Copy link</a>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="row">
+      <div class="span12">
+        <ul class="thumbnails">
+          <li class="span4 image-block">
+            <div class="thumbnail">
+              <canvas></canvas>
+              <div class="dashboard">
+                <div class="action-bar">
+                  <a href="#"><i class="icon-link"></i> Copy link</a>
+                  <a href="#" class="cp-link"><i class="icon-link"></i> Copy link</a>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="span4 image-block">
+            <div class="thumbnail">
+              <canvas></canvas>
+              <div class="dashboard">
+                <div class="action-bar">
+                  <a href="#"><i class="icon-link"></i> Copy link</a>
+                  <a href="#" class="cp-link"><i class="icon-link"></i> Copy link</a>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="span4 image-block">
+            <div class="thumbnail">
+              <canvas></canvas>
+              <div class="dashboard">
+                <div class="action-bar">
+                  <a href="#"><i class="icon-link"></i> Copy link</a>
+                  <a href="#" class="cp-link"><i class="icon-link"></i> Copy link</a>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </div>
-</div>
-<div class="container">
-  <div class="row">
-    <div class="span12">
-      <ul class="thumbnails">
-        <li class="span4 image-block">
-          <a href="#" class="thumbnail">
-            <canvas></canvas>
-          </a>
-        </li>
-        <li class="span4 image-block">
-          <a href="#" class="thumbnail">
-            <canvas></canvas>
-          </a>
-        </li>
-        <li class="span4 image-block">
-          <a href="#" class="thumbnail">
-            <canvas></canvas>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="row">
-    <div class="span12">
-      <ul class="thumbnails">
-        <li class="span4 image-block">
-          <a href="#" class="thumbnail">
-            <canvas></canvas>
-          </a>
-        </li>
-        <li class="span4 image-block">
-          <a href="#" class="thumbnail">
-            <canvas></canvas>
-          </a>
-        </li>
-        <li class="span4 image-block">
-          <a href="#" class="thumbnail">
-            <canvas></canvas>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-  <div class="row">
-    <div class="span12">
-      <ul class="thumbnails">
-        <li class="span4 image-block">
-          <a href="#" class="thumbnail">
-            <canvas></canvas>
-          </a>
-        </li>
-        <li class="span4 image-block">
-          <a href="#" class="thumbnail">
-            <canvas></canvas>
-          </a>
-        </li>
-        <li class="span4 image-block">
-          <a href="#" class="thumbnail">
-            <canvas></canvas>
-          </a>
-        </li>
-      </ul>
-    </div>
-  </div>
-</div>
+  <div class='notifications center'></div>
 </body>
 </html>

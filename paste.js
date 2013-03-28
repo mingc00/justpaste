@@ -84,6 +84,13 @@ $(function() {
     queue.add(dataURL);
   }
 
+  function notify(type, msg) {
+    $('.notifications').notify({
+      type: type,
+      message: { text: msg }
+    }).show();
+  }
+
   var ImageQueue = (function () {
     function ImageQueue() {
       this.idx = 0;
@@ -96,7 +103,7 @@ $(function() {
     };
 
     ImageQueue.prototype.add = function(dataURL) {
-      if(this.idx > 9) {
+      if(this.idx >= 6) {
         // another page
       }
 
@@ -130,24 +137,24 @@ $(function() {
         beforeSend: function() {
           queue.canvases.eq(idx).css('visibility', 'hidden');
           $('.image-block').eq(idx).addClass('loading-icon').css('display', 'block').
-              append('<div class="progress progress-striped active"><div class="bar"></div></div>');
+              find('.thumbnail').append('<div class="progress progress-striped active"><div class="bar"></div></div>');
+          notify('info', 'Uploading');
         },
         success: function(data, status, xhr) {
           var index = xhr.idx;
           var obj = queue.canvases.eq(index);
           obj.css('visibility', 'visible').css('display', 'none').fadeIn().parent().removeClass('loading-icon');
           // remove progress bar
-          obj.parent().next().remove();
-          $.pnotify({
-            title: 'Upload success',
-            text: 'Image in clipboard is uploaded',
-            type: 'success',
-            delay: 5000
-          });
+          $('.image-block').find('.progress').remove();
+          notify('success', 'Done');
           var url = data.upload.links.original;
           // attach url
-          obj.parent().attr('title', url);
+          $('.image-block').find('.cp-link').attr('title', url);
           queue.bind_copy(index);
+          $('.image-block').eq(index).hover(function (e) {
+            var visibility = (e.type == 'mouseleave' ? 'hidden' : 'visible');
+            $(this).find('.dashboard').css('visibility', visibility);
+          });
         },
         xhr: function() {
           var xhr = new window.XMLHttpRequest();
@@ -165,7 +172,7 @@ $(function() {
     };
 
     ImageQueue.prototype.bind_copy = function(idx) {
-      $(".image-block").eq(idx).children('a').zclip({
+      $(".image-block").eq(idx).find('.cp-link').zclip({
         path: 'zclip/ZeroClipboard.swf',
         copy: function() {
           return $(this).attr('title');
