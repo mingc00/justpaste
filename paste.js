@@ -79,10 +79,10 @@ $(function() {
     queue.add(dataURL);
   }
 
-  function notify(msg, idx) {
+  function notify(title, text, idx) {
     $.gritter.add({
-      title: msg,
-      text: '',
+      title: title,
+      text: text,
       image: $('canvas').eq(idx)[0].toDataURL()
     });
   }
@@ -133,7 +133,7 @@ $(function() {
         beforeSend: function() {
           queue.canvases.eq(idx).css('visibility', 'hidden');
           $('.image-block').eq(idx).addClass('loading-icon').css('display', 'block').
-              find('.thumbnail').append('<div class="progress progress-striped active"><div class="bar"></div></div>');
+              find('.thumbnail').append('<div class="progress"><div class="bar"></div></div>');
         },
         success: function(data, status, xhr) {
           var index = xhr.idx;
@@ -141,7 +141,7 @@ $(function() {
           obj.css('visibility', 'visible').css('display', 'none').fadeIn().parent().removeClass('loading-icon');
           // remove progress bar
           $('.image-block').find('.progress').remove();
-          notify('Done', index);
+          notify('Done', '', index);
           var url = data.upload.links.original;
           // attach url
           $('.image-block').find('.cp-link').attr('title', url);
@@ -175,8 +175,12 @@ $(function() {
           return $(this).attr('title');
         },
         afterCopy: function() {
-          notify('Copy link', idx);
+          var url = $('.cp-link').eq(idx).attr('title');
+          notify('Copy link', url, idx);
         }
+      });
+      $('.zclip').eq(idx).hover(function(e) {
+        $(this).parent().parent().css('visibility', 'visible');
       });
     };
 
