@@ -4,7 +4,7 @@ body {
 
 h1 {
   font-size: 30px;
-  text-shadow: 2px 2px 6px;
+  color: #0088cc;
 }
 
 hr {
@@ -68,4 +68,15 @@ canvas {
 
 .thumbnail hr {
   margin: 0 0 10px 0;
+}
+
+#tip {
+  margin: 100px auto 0 auto;
+  width: 300px;
+  font-size: 18px;
+  color: #5a5a5a;
+}
+
+#tip > li {
+  margin-top: 8px;
 }
