@@ -2,13 +2,30 @@ body {
   background-image: url(images/brillant.png);
 }
 
-h1 {
+h1, h2 {
+  display: inline;
+}
+
+h2 a {
+  font-size: 14px;
+  margin-left: 12px;
+}
+
+h1 a {
   font-size: 30px;
+}
+
+.masterhead a {
+  color: #999;
+}
+
+.masterhead a:hover {
   color: #0088cc;
+  text-decoration: none;
 }
 
 hr {
-  margin: 12px 0 40px 0;
+  margin: 0 0 40px 0;
 }
 
 canvas {

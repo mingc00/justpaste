@@ -99,7 +99,7 @@ $(function() {
     };
 
     ImageQueue.prototype.add = function(dataURL) {
-      if(this.idx == 0) {
+      if(this.idx === 0) {
         $('#tip').fadeOut();
       }
       if(this.idx >= 6) {
