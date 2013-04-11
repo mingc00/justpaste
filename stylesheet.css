@@ -87,13 +87,14 @@ canvas {
   margin: 0 0 10px 0;
 }
 
-#tip {
+.tip {
   margin: 100px auto 0 auto;
   width: 300px;
   font-size: 18px;
   color: #5a5a5a;
+  z-index: -1;
 }
 
-#tip > li {
+.tip > li {
   margin-top: 8px;
 }

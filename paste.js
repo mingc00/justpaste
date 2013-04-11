@@ -100,7 +100,7 @@ $(function() {
 
     ImageQueue.prototype.add = function(dataURL) {
       if(this.idx === 0) {
-        $('#tip').fadeOut();
+        $('.tip').css('display', 'none');
       }
       if(this.idx >= 6) {
         // another page
@@ -111,7 +111,7 @@ $(function() {
         var canvas = queue.latest();
         canvas.getContext('2d').drawImage(this, 0, 0, canvas.width, canvas.height);
         queue.upload(queue.idx, this.src);
-        queue.idx++;
+        queue.idx = (queue.idx + 1) % 6;
       };
       img.src = dataURL;
     };
