@@ -98,3 +98,8 @@ canvas {
 .tip > li {
   margin-top: 8px;
 }
+
+.tip .bold {
+  font-weight: bold;
+  font-size: 20px;
+}

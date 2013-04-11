@@ -143,17 +143,16 @@ $(function() {
           var obj = queue.canvases.eq(index);
           obj.css('visibility', 'visible').css('display', 'none').fadeIn().parent().removeClass('loading-icon');
           // remove progress bar
-          $('.image-block').find('.progress').remove();
+          $('.image-block').eq(index).find('.progress').remove();
           notify('Done', '', index);
           var url = data.upload.links.original;
           // attach url
-          $('.image-block').find('.cp-link').attr('title', url);
+          $('.image-block').eq(index).find('.action-bar a').attr('title', url);
           queue.bind_copy(index);
           $('.image-block').eq(index).hover(function (e) {
             var visibility = (e.type == 'mouseleave' ? 'hidden' : 'visible');
             $(this).find('.dashboard').css('visibility', visibility);
           });
-          f = xhr;
         },
         xhr: function() {
           var xhr = new window.XMLHttpRequest();
@@ -192,4 +191,10 @@ $(function() {
   })();
 
   var queue = new ImageQueue();
+
+  $('.pk-link').click(function() {
+    var url = this.title;
+    window.open('http://www.plurk.com/?qualifier=shares&status='.
+      concat(encodeURIComponent(url)));
+  });
 });
