@@ -197,4 +197,11 @@ $(function() {
     window.open('http://www.plurk.com/?qualifier=shares&status='.
       concat(encodeURIComponent(url)));
   });
+
+  $('.tb-link').click(function() {
+    var url = this.title;
+    window.open('http://www.tumblr.com/share/photo?source='.
+      concat(encodeURIComponent(url)), 'tumblr share',
+      'height=450, width=430');
+  });
 });
