@@ -83,14 +83,14 @@ $(function() {
     $.gritter.add({
       title: title,
       text: text,
-      image: $('canvas').eq(idx)[0].toDataURL()
+      image: $('img').eq(idx)[0].src
     });
   }
 
   var ImageQueue = (function () {
     function ImageQueue() {
       this.idx = 0;
-      this.canvases = $('.image-block canvas');
+      this.canvases = $('.image-block img');
       this.page = 0;
     }
 
@@ -106,10 +106,8 @@ $(function() {
         // another page
       }
 
-      var img = new Image();
+      var img = queue.latest();
       img.onload = function() {
-        var canvas = queue.latest();
-        canvas.getContext('2d').drawImage(this, 0, 0, canvas.width, canvas.height);
         queue.upload(queue.idx, this.src);
         queue.idx = (queue.idx + 1) % 6;
       };
