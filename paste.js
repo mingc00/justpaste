@@ -25,7 +25,7 @@ $(function() {
   /* Handle paste events */
   function pasteHandler(e) {
     // We need to check if event.clipboardData is supported (Chrome)
-    if (e.clipboardData) {
+    if (e.clipboardData && navigator.userAgent.match(/webkit/i)) {
       // Get the items from the clipboard
       var items = e.clipboardData.items;
       if (items) {
