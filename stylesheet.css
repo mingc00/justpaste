@@ -131,3 +131,11 @@ img {
 .dropable-active {
   border-color: #0c0;
 }
+
+.gritter-with-image {
+  width: 180px;
+}
+
+.gritter-image {
+  width: 86px;
+}

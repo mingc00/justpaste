@@ -122,8 +122,9 @@ var ImageQueue = (function () {
 
   ImageQueue.prototype.upload = function(idx, dataURL) {
     var base64;
-    if (dataURL.indexOf('data:image/png;base64,') !== -1) {
-      base64 = dataURL.slice(22);
+    match_result = dataURL.match(/data:image\/(\w+);base64,(.*)/);
+    if(match_result) {
+      base64 = match_result[2];
     }
     var fd = new FormData();
     fd.append('image', base64);
