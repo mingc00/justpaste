@@ -5,17 +5,12 @@
   <meta property="og:title" content="Justpaste" />
   <meta property="og:url" content="http://justpaste.shume.in">
 </head>
-<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
-<link href="http://netdna.bootstrapcdn.com/font-awesome/3.0.2/css/font-awesome.css" rel="stylesheet">
-<script type="text/javascript" src="http://code.jquery.com/jquery-2.0.0.min.js"></script>
-<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="zclip/jquery.zclip.min.js"></script>
-<script type="text/javascript" src="gritter/jquery.gritter.min.js"></script>
-<script type="text/javascript" src="paste.js"></script>
+<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/css/bootstrap-combined.no-icons.min.css" rel="stylesheet">
+<link href="//netdna.bootstrapcdn.com/font-awesome/3.2.1/css/font-awesome.min.css" rel="stylesheet">
 <link href="gritter/jquery.gritter.css" rel="stylesheet">
 <link href="stylesheet.css" rel="stylesheet">
 <body>
-  <div class="container">
+  <div class="container main-content">
     <div class="masterhead">
       <h1>
         <a href="/">Justpaste</a>
@@ -25,11 +20,14 @@
       </h2>
     </div>
     <hr>
-        <ol class="tip">
+      <div class="tips">
+        <ol class="steps">
           <li><span class="bold">Copy</span> image data to clipboard</li>
           <li><span class="bold">Paste</span> to upload</li>
           <li><span class="bold">Get</span> image url and share with people</li>
         </ol>
+        <p>Or, You can drop images</p>
+      </div>
     <div class="row">
       <div class="span12">
         <ul class="thumbnails">
@@ -115,5 +113,13 @@
       </div>
     </div>
   </div>
+  <div id="drop-zone" class="dropable">Drop images file here...</div>
+
+  <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+  <script src="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="zclip/jquery.zclip.min.js"></script>
+  <script type="text/javascript" src="gritter/jquery.gritter.min.js"></script>
+  <script type="text/javascript" src="paste.js"></script>
+  <script type="text/javascript" src="drop.js"></script>
 </body>
 </html>
