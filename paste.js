@@ -106,7 +106,7 @@ var ImageQueue = (function () {
 
   ImageQueue.prototype.add = function(dataURL) {
     if(this.idx === 0) {
-      $('.tip').css('display', 'none');
+      $('.tips').css('display', 'none');
     }
     if(this.idx >= 6) {
       // another page
