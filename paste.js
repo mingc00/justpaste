@@ -128,14 +128,14 @@ var ImageQueue = (function () {
     }
     var fd = new FormData();
     fd.append('image', base64);
-    fd.append('key', '5df8062c468eb678dd194db7e2216387');
 
     var upload_req = $.ajax({
       type: 'POST',
-      url: 'http://api.imgur.com/2/upload.json',
+      url: 'https://api.imgur.com/3/image',
       processData: false,
       contentType: false,
       crossDomain: true,
+      headers: { 'Authorization': 'Client-ID ca7108e04622b7a' },
       data: fd,
       dataType: 'json',
       beforeSend: function() {
@@ -143,14 +143,14 @@ var ImageQueue = (function () {
         $('.image-block').eq(idx).addClass('loading-icon').css('display', 'block').
             find('.thumbnail').append('<div class="progress"><div class="bar"></div></div>');
       },
-      success: function(data, status, xhr) {
+      success: function(result, status, xhr) {
         var index = xhr.idx;
         var obj = queue.canvases.eq(index);
         obj.css('visibility', 'visible').css('display', 'none').fadeIn().parent().removeClass('loading-icon');
         // remove progress bar
         $('.image-block').eq(index).find('.progress').remove();
         notify('Done', '', index);
-        var url = data.upload.links.original;
+        var url = result.data.link;
         // attach url
         $('.image-block').eq(index).find('.action-bar a').attr('title', url);
         queue.bind_copy(index);
