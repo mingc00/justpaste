@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Justpaste</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:title" content="Justpaste">
+  <meta property="og:url" content="http://justpaste.mingc.org">
+</head>
+<link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.2/material.blue-deep_orange.min.css" />
+<script src="https://storage.googleapis.com/code.getmdl.io/1.0.2/material.min.js"></script>
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+<link href="style.css" rel="stylesheet">
+<body>
+<div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+  <header class="mdl-layout__header">
+    <div class="mdl-layout__header-row">
+      <span class="mdl-layout-title">Justpaste <sub>beta</sub></span>
+      <div class="mdl-layout-spacer"></div>
+      <nav class="mdl-navigation mdl-layout--large-screen-only">
+        <a class="mdl-navigation__link" href="https://github.com/ciffel/justpaste">Github</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="mdl-layout__content">
+    <div class="page-content">
+      <div class="mdl-layout mdl-js-layout mdl-layout--fixed-header">
+        <div id="progress-bar" class="mdl-progress mdl-js-progress mdl-progress__indeterminate"></div>
+        <div  id="img-card" class="mdl-card mdl-shadow--2dp img-card">
+          <div class="mdl-card__title" id="img"></div>
+          <div class="mdl-card__actions mdl-card--border">
+            <div class="mdl-textfield mdl-js-textfield mdl-textfield--expandable image-url-action">
+             <label class="mdl-button mdl-js-button mdl-button--icon" for="image-url">
+               <i class="material-icons" id="copy-btn">content_copy</i>
+             </label>
+             <div class="mdl-tooltip" for="copy-btn">Copy</div>
+             <div class="mdl-textfield__expandable-holder">
+               <input class="mdl-textfield__input" type="text" value="https://imgur.com/aafsd3" id="image-url" />
+               <label class="mdl-textfield__label">Expandable Input</label>
+             </div>
+           </div>
+          </div>
+      </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<div id="paste-zone" contenteditable></div>
+<script type="text/javascript" src="js/ui.js"></script>
+<script type="text/javascript" src="js/core.js"></script>
+</body>
+</html>
