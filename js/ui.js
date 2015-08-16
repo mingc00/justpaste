@@ -1,7 +1,7 @@
 var UIHandler = function() {
 
   UIHandler = function() {
-    this.img = document.querySelector('#img');
+    this.img = document.querySelector('#image');
     this.urlField = document.querySelector('#image-url');
     this.copyBtn = document.querySelector('#copy-btn');
     this.progress = document.querySelector('#progress-bar');
@@ -16,6 +16,9 @@ var UIHandler = function() {
 
   UIHandler.prototype.registerEvents = function() {
     this.copyBtn.addEventListener('click', this.copyHandler.bind(this));
+    this.urlField.addEventListener('click', (function() {
+      this.urlField.select();
+    }).bind(this));
   };
 
   UIHandler.prototype.copyHandler = function(e) {
@@ -33,7 +36,7 @@ var UIHandler = function() {
   }
 
   UIHandler.prototype.setImage = function(url) {
-    this.img.style.backgroundImage = 'url(' +　url + ')';
+    this.img.src = url;
   }
 
   UIHandler.prototype.setURL = function(url) {

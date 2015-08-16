@@ -1,14 +1,15 @@
+.page-cotent {
+  margin-top: 30px;
+}
 #paste-zone {
   cursor: none;
   border: none;
   color: transparent;
   display: inline-block;
 }
-#img {
-  height: 600px;
-  background-repeat: no-repeat;
-  background-position: center;
-  background-size: contain;
+#image {
+  max-height: 680px;
+  max-width: 100%;
 }
 #progress-bar {
   margin-top: 300px;
@@ -21,7 +22,7 @@
 }
 .image-url-action > .mdl-textfield__expandable-holder {
   margin-left: 50px;
-  width: 240px;
+  width: 255px;
 }
 .img-card {
   display: none;
