@@ -21,9 +21,11 @@
 
   Justpaste.prototype.setupProxy = function() {
     var el = document.getElementById('paste-zone');
-    el.focus();
-    el.addEventListener("click", function() {
-      el.focus();
+    document.addEventListener("keydown", function(e) {
+      var isCtrlDown = (e.ctrlKey && navigator.userAgent.indexOf('Mac') === -1) || e.metaKey;
+      if (isCtrlDown && e.keyCode === 86) {  //ctrl-v
+        el.focus();
+      }
     });
     this.pasteCatcher = el;
   };
